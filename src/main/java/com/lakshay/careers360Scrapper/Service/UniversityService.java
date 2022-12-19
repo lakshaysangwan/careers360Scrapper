@@ -48,11 +48,27 @@ public class UniversityService {
                     }
                 }
                 univ.setUnivName(univPage.getElementsByTag("h1").get(0).text().toUpperCase());
-                logger.info(univ.toString());
                 if (universityRepository.findByUnivName(univ.getUnivName()) == null) {
+
                     Element univProperties = univPage.getElementsByClass("top-menu").get(0);
                     if (univProperties.text().contains("Affiliated Colleges")) {
+                        logger.info(univ.toString());
                         String collegeUrl = univProperties.getElementsContainingOwnText("Affiliated Colleges").attr("href");
+                        univ.setCollegeUrl(collegeUrl);
+                        Elements univData = univPage.getElementsByClass("cardBlkInn quickFact").get(0).getElementsByTag("div");
+                        for (Element z : univData) {
+                            if (z.text().contentEquals("Type of Institute")) {
+                                univ.setInstituteType(Objects.requireNonNull(z.nextElementSibling()).text());
+                            }
+                        }
+                        univData = univPage.getElementsByTag("td");
+                        for (Element univDatum : univData) {
+                            if (univDatum.text().contains("Estd. Year:")) {
+                                univ.setEstablishedYear(univDatum.child(0).text());
+                            } else if (univDatum.text().contains("Total Student Enrollments")) {
+                                univ.setTotalStudents(univDatum.child(0).text());
+                            }
+                        }
                         univ.setColleges(collegeService.collegeScrapper(univ));
                         universityRepository.save(univ);
                     } else {
