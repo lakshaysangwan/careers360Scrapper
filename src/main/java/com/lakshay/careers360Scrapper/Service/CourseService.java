@@ -96,7 +96,7 @@ public class CourseService {
                         course.setSeats(courseDetail.ownText());
                     }
                 }
-//                logger.info(course.toString());
+                logger.info(course.toString());
                 courses.add(course);
             }
         }

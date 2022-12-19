@@ -48,12 +48,11 @@ public class CollegeService {
             Elements collegeList = doc.getElementsByClass("contentPart").get(0).getElementsByClass("cardBlkInn pull-left");
             for (Element college : collegeList) {
                 College college1 = collegeDetailsService.collegeDetailsScrapper("https://www.careers360.com" + college.child(0).child(0).attr("href"));
-                logger.info(college1.toString());
-                college1.setCourses(courseService.courseScrapper(college1));
                 college1.setUniversity(university);
+                college1.setCourses(courseService.courseScrapper(college1));
                 colleges.add(college1);
             }
         }
-        return null;
+        return colleges;
     }
 }

@@ -89,7 +89,6 @@ public class UniversityService {
                             }
                         }
                         univ.setCourses(courseService.courseScrapper(univ));
-//                        logger.info(univ.toString());
                         universityRepository.save(univ);
                     }
                 }
