@@ -69,6 +69,9 @@ public class CourseService {
                 doc = Jsoup.connect(college.getCourseUrl()).get();
                 break;
             } catch (Exception e) {
+                if (e.getMessage().contains("404")) {
+                    return null;
+                }
             }
         }
         String totalCoursesString = doc.getElementsByClass("showResults").get(0).text();
@@ -96,7 +99,6 @@ public class CourseService {
                         course.setSeats(courseDetail.ownText());
                     }
                 }
-                logger.info(course.toString());
                 courses.add(course);
             }
         }

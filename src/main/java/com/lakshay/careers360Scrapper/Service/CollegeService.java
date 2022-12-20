@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 public class CollegeService {
-    private final Logger logger = LoggerFactory.getLogger(CourseService.class);
+    private final Logger logger = LoggerFactory.getLogger(CollegeService.class);
     @Autowired
     CourseService courseService;
     @Autowired
@@ -48,8 +48,15 @@ public class CollegeService {
             Elements collegeList = doc.getElementsByClass("contentPart").get(0).getElementsByClass("cardBlkInn pull-left");
             for (Element college : collegeList) {
                 College college1 = collegeDetailsService.collegeDetailsScrapper("https://www.careers360.com" + college.child(0).child(0).attr("href"));
+                if(college1 == null) continue;
                 college1.setUniversity(university);
-                college1.setCourses(courseService.courseScrapper(college1));
+                if(college1 == null){
+                    continue;
+                }
+                logger.info(college1.toString());
+                if(college1.getCourseUrl() != null){
+                    college1.setCourses(courseService.courseScrapper(college1));
+                }
                 colleges.add(college1);
             }
         }

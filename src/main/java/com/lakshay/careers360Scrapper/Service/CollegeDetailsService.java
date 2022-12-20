@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Service
 public class CollegeDetailsService {
-    private final Logger logger = LoggerFactory.getLogger(CourseService.class);
+    private final Logger logger = LoggerFactory.getLogger(CollegeDetailsService.class);
     private final CourseRepository courseRepository;
 
     public CollegeDetailsService(CourseRepository courseRepository) {
@@ -29,12 +29,24 @@ public class CollegeDetailsService {
                 doc = Jsoup.connect(url).get();
                 break;
             } catch (Exception e) {
+                if (e.getMessage().contains("404")|| e.getMessage().contains("500")) {
+                    return null;
+                }
             }
         }
         college.setCollegeName(doc.getElementsByTag("h1").text());
         college.setUrl(url);
-        college.setCourseUrl(doc.getElementsByClass("top-menu").get(0).getElementsContainingOwnText("Courses & Fees").get(0).attr("href"));
-        Elements collegeData = doc.getElementsByClass("cardBlkInn quickFact").get(0).getElementsByTag("div");
+        try{
+            college.setCourseUrl(doc.getElementsByClass("top-menu").get(0).getElementsContainingOwnText("Courses & Fees").get(0).attr("href"));
+        }catch(IndexOutOfBoundsException indexOutOfBoundsException){
+            college.setCourseUrl(null);
+        }
+        Elements collegeData;
+        try{
+            collegeData = doc.getElementsByClass("cardBlkInn quickFact").get(0).getElementsByTag("div");
+        }catch(IndexOutOfBoundsException indexOutOfBoundsException){
+            return null;
+        }
         for (Element z : collegeData) {
             if (z.text().contentEquals("Ownership")) {
                 college.setInstituteType(Objects.requireNonNull(z.nextElementSibling()).text());
