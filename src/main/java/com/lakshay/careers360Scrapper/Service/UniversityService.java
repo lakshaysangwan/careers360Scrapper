@@ -49,8 +49,12 @@ public class UniversityService {
                 }
                 univ.setUnivName(univPage.getElementsByTag("h1").get(0).text().toUpperCase());
                 if (universityRepository.findByUnivName(univ.getUnivName()) == null) {
-
-                    Element univProperties = univPage.getElementsByClass("top-menu").get(0);
+                    Element univProperties = null;
+                    try{
+                        univProperties = univPage.getElementsByClass("top-menu").get(0);
+                    }catch(IndexOutOfBoundsException indexOutOfBoundsException){
+                        continue;
+                    }
                     if (univProperties.text().contains("Affiliated Colleges")) {
                         logger.info(univ.toString());
                         String collegeUrl = univProperties.getElementsContainingOwnText("Affiliated Colleges").attr("href");
